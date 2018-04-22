@@ -62,6 +62,15 @@ def main():
             if( m[1] > int(y+ h*2/3)):
                 continue
             cv2.rectangle(roi_color,(m[0],m[1]),(m[0]+m[2],m[1]+m[3]),(0,255,0),2)
+            x = m[0]
+            xright = m[0] + int(m[2] * .7)
+            y = m[1]
+            w = m[2]
+            wleft = m[2] - int(m[2] * .7)
+            h = m[3]
+            cv2.rectangle(roi_color,(x,y), (x+wleft,y+h), (0,0,255),2)
+            cv2.rectangle(roi_color,(xright,y), (xright+wleft, y+h), (0,20,255),2)
+            #roi_color_2 = frame[y:y+h, x:x2]
     
     
         #show the frame
