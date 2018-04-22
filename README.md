@@ -3,9 +3,9 @@ Face-Moji :grin:
 Do you ever wish you could display your emotions with emojis in real life? :speak_no_evil:
 Well now you can! :scream_cat:
 
-With real-time facial expresion detection, we created a program that replaces
+With real-time facial expresion detection :sunglasses:, we created a program that replaces
 your face :man: :woman: with emojis :fearful: :stuck_out_tongue_winking_eye:.
-Your friends will never be confused about how you feel again! :sweat_smile:
+Your friends :neckbeard: will never be confused about how you feel again! :sweat_smile:
 
 To use this program, simply run `python expression.py` and smile for the camera! :grimacing:
 The program should automatically display what you're really feeling deep deep down inside :neutral_face:
