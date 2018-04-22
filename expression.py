@@ -52,7 +52,7 @@ def main():
         
         for (x,y,w,h) in faces:
             
-            cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2) #draw rectangle to main image
+            #cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2) #draw rectangle to main image
             d_face = frame[int(y):int(y+h), int(x):int(x+w)] #crop detected face
             d_face = cv2.cvtColor(d_face, cv2.COLOR_BGR2GRAY) #transform to gray scale
             d_face = cv2.resize(d_face, (48, 48)) #resize to 48x48
@@ -67,14 +67,29 @@ def main():
             #write emotion text above rectangle
             cv2.putText(frame, emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
             
-            #now we want to overlay the emoji
+            #grab the emoji
             path = "faces/" + emotions[max_index] + ".png"
+            print(path)
             my_file = Path(path)
             if not my_file.is_file():
                 continue
-            emoji = cv2.imread(path)
-            cv2.imshow("e",emoji)
-                
+            emoji = cv2.imread(path,-1)
+            # Create the mask for the emoji
+            mask = emoji[:,:,3]
+            mask_inv = cv2.bitwise_not(mask)
+            emoji = emoji[:,:,0:3]
+            #resize
+            emoji = cv2.resize(emoji,(w,h),interpolation = cv2.INTER_AREA)
+            mask = cv2.resize(mask,(w,h),interpolation = cv2.INTER_AREA)
+            mask_inv = cv2.resize(mask_inv,(w,h),interpolation = cv2.INTER_AREA)
+
+            roi = frame[y:y+h,x:x+w]
+            roi_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
+            roi_fg = cv2.bitwise_and(emoji,emoji,mask = mask)
+
+            # join the roi_bg and roi_fg
+            dst = cv2.add(roi_bg,roi_fg)
+            frame[y:y+h,x:x+w] = dst
         cv2.imshow("face",frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'): #press q to quit
