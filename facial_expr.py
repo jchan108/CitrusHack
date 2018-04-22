@@ -34,14 +34,17 @@ class cameraFeed():
 
 
 def main():
+    
+    lower = np.array([-7,121,80])
+    upper = np.array([55,193,171])
     face_model = cv2.CascadeClassifier("cascades/face_cascade.xml")
     mouth_model = cv2.CascadeClassifier("cascades/mouth_cascade.xml")
     c = cameraFeed().start()
     ref = c.read()
     while True:
+        found = False
         frame = c.read()
         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        
         faces = face_model.detectMultiScale(gray, 1.3, 5)
         for (x,y,w,h) in faces:
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
@@ -61,10 +64,21 @@ def main():
             m = max(mouths,key = area)
             if( m[1] > int(y+ h*2/3)):
                 continue
+            found = True
             cv2.rectangle(roi_color,(m[0],m[1]),(m[0]+m[2],m[1]+m[3]),(0,255,0),2)
-    
-    
-        #show the frame
+            #try and calculate the curvature of the mouth
+        
+        if found:
+            #show the frame
+            roi = roi_color[m[1]:m[1]+m[2],m[0]:m[0]+m[2]]
+            roi = cv2.resize(roi, (500,500))
+            blurr = cv2.blur(roi,(15,15))
+            hsv = cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
+            thresh = cv2.inRange(hsv,lower,upper)
+            cv2.imshow("ROI",roi)
+            cv2.imshow("hsv",hsv)
+            cv2.imshow("thresh",thresh)
+
         cv2.imshow("frame",frame)
         #waitKey
         k = cv2.waitKey(1) & 0xFF;
