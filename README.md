@@ -11,9 +11,9 @@ To use this program, simply run `python expression.py` and smile for the camera!
 The program should automatically display what you're really feeling deep deep down inside :neutral_face:
 
 To run this program, the following libraries are needed:
-	* opencv for python :zap:
-	* tensorflow :boom:
-	* keras :fire:
+1. opencv for python :zap:
+2. tensorflow :boom:
+3. keras :fire:
 
 After that, enjoy sharing your program with your friends :family:
 and make sure to give us a :+1: on twitter with the hashtag :hash:facemoji.
