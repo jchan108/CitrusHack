@@ -4,6 +4,7 @@ from keras.preprocessing import image
 import math
 from threading import Thread
 import time
+from pathlib import Path
 
 #face expression recognizer initialization
 from keras.models import model_from_json
@@ -65,7 +66,14 @@ def main():
             emotion = emotions[max_index]
             #write emotion text above rectangle
             cv2.putText(frame, emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
-
+            
+            #now we want to overlay the emoji
+            path = "faces/" + emotions[max_index] + ".png"
+            my_file = Path(path)
+            if not my_file.is_file():
+                continue
+            emoji = cv2.imread(path)
+            cv2.imshow("e",emoji)
                 
         cv2.imshow("face",frame)
 
