@@ -65,6 +65,7 @@ def main():
             [mx,my,mw,mh] = m
             if(my < int(h *2/3)):
                 continue
+
             cv2.rectangle(roi_color,(mx,my),(mx+mw,my+mh),(255,255,255),2)
             #try and calculate the curvature of the mouth
             x = mx
