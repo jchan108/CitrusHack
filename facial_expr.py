@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-
+import math
 from threading import Thread
 import time
 
@@ -57,9 +57,9 @@ def main():
             #mouth classifier
             if len(mouths) < 1:
                 continue
-            #grab the biggestrectangle
+            #grab the biggest rectangle
             m = max(mouths,key = area)
-            if( m[1] > int(m[1] + h*2/3)):
+            if( m[1] > int(y+ h*2/3)):
                 continue
             cv2.rectangle(roi_color,(m[0],m[1]),(m[0]+m[2],m[1]+m[3]),(0,255,0),2)
     
