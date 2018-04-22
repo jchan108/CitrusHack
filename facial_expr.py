@@ -48,7 +48,6 @@ def main():
         for (x,y,w,h) in faces:
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
             roi_gray = gray[y:y+h, x:x+w]
-            cv2.imshow("f",roi_gray)
             roi_color = frame[y:y+h, x:x+w]
             #grab our mouth
             mouths = mouth_model.detectMultiScale(
@@ -65,7 +64,7 @@ def main():
             [mx,my,mw,mh] = m
             if(my < int(h *2/3)):
                 continue
-
+            
             cv2.rectangle(roi_color,(mx,my),(mx+mw,my+mh),(255,255,255),2)
             #try and calculate the curvature of the mouth
             x = mx
@@ -74,9 +73,15 @@ def main():
             w = mw
             wleft = mw - int(mw * .7)
             h = mh
+            roi_left = roi_color[y:y+h,x:x+wleft]
+            roi_right = roi_color[y:y+h,xright:xright+wleft]
+            roi_left = cv2.resize(roi_left,(450,450))
+            roi_right = cv2.resize(roi_right,(450,450))
             cv2.rectangle(roi_color,(x,y), (x+wleft,y+h), (0,0,255),2)
             cv2.rectangle(roi_color,(xright,y), (xright+wleft, y+h), (0,20,255),2)
             #roi_color_2 = frame[y:y+h, x:x2]
+            cv2.imshow("left",roi_left)
+            cv2.imshow("right",roi_right)
 
         cv2.imshow("frame",frame)
         #waitKey
