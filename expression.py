@@ -51,8 +51,7 @@ def main():
             continue
         
         for (x,y,w,h) in faces:
-            
-            #cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2) #draw rectangle to main image
+
             d_face = frame[int(y):int(y+h), int(x):int(x+w)] #crop detected face
             d_face = cv2.cvtColor(d_face, cv2.COLOR_BGR2GRAY) #transform to gray scale
             d_face = cv2.resize(d_face, (48, 48)) #resize to 48x48
@@ -65,8 +64,7 @@ def main():
             max_index = np.argmax(predictions[0])
             emotion = emotions[max_index]
             #write emotion text above rectangle
-            cv2.putText(frame, emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
-            
+            print(emotion)
             #grab the emoji
             path = "faces/" + emotions[max_index] + ".png"
             print(path)
