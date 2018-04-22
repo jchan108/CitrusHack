@@ -4,6 +4,8 @@ import cv2
 from threading import Thread
 import time
 
+def area(x):
+    return x[2] * x[3]
 
 #run video feed on a different thread
 class cameraFeed():
@@ -39,22 +41,27 @@ def main():
     while True:
         frame = c.read()
         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        
         faces = face_model.detectMultiScale(gray, 1.3, 5)
         for (x,y,w,h) in faces:
             cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
             roi_gray = gray[y:y+h, x:x+w]
             roi_color = frame[y:y+h, x:x+w]
-            mouth = mouth_model.detectMultiScale(
+            #grab our mouth
+            mouths = mouth_model.detectMultiScale(
                 roi_gray,
                 scaleFactor= 1.7,
                 minNeighbors= 25,
                 minSize = (25,25),
                 flags=cv2.CASCADE_SCALE_IMAGE)
             #mouth classifier
-            for(sx,sy,sw,sh) in mouth:
-                if( sy > int(y + h*2/3)):
-                    continue
-                cv2.rectangle(roi_color,(sx,sy),(sx+sw,sy+sh),(0,255,0),2)
+            if len(mouths) < 1:
+                continue
+            #grab the biggestrectangle
+            m = max(mouths,key = area)
+            if( m[1] > int(m[1] + h*2/3)):
+                continue
+            cv2.rectangle(roi_color,(m[0],m[1]),(m[0]+m[2],m[1]+m[3]),(0,255,0),2)
     
     
         #show the frame
