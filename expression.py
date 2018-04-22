@@ -39,9 +39,14 @@ def main():
     model = model_from_json(open("facial_expression_model_structure.json", "r").read())
     model.load_weights('facial_expression_model_weights.h5') #load weights
     emotions = ('angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral')
-
+    speedup_bool = False
+    
     c = cameraFeed().start()
     while True:
+        if speedup_bool:
+            speedup_bool = False
+            continue
+        speedup_bool = True
         frame = c.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
@@ -67,6 +72,7 @@ def main():
             emoji = cv2.imread(path,-1)
             if emoji is None:
                 continue
+            #resize
             emoji = cv2.resize(emoji,(w,h),interpolation = cv2.INTER_AREA)
             # Create the mask for the emoji
             mask = emoji[:,:,3]
