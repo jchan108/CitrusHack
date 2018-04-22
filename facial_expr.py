@@ -35,10 +35,10 @@ class cameraFeed():
 
 def main():
     
-    lower = np.array([48,203,130])
-    upper = np.array([69,243,186])
+    lower = np.array([100,100,100])
+    upper = np.array([255,255,255])
     face_model = cv2.CascadeClassifier("cascades/face_cascade.xml")
-    mouth_model = cv2.CascadeClassifier("cascades/mouth_cascade.xml")
+    mouth_model = cv2.CascadeClassifier("cascades/Mouth.xml")
     c = cameraFeed().start()
     ref = c.read()
     while True:
@@ -73,15 +73,28 @@ def main():
             w = mw
             wleft = mw - int(mw * .7)
             h = mh
-            roi_left = roi_color[y:y+h,x:x+wleft]
-            roi_right = roi_color[y:y+h,xright:xright+wleft]
-            roi_left = cv2.resize(roi_left,(450,450))
-            roi_right = cv2.resize(roi_right,(450,450))
-            cv2.rectangle(roi_color,(x,y), (x+wleft,y+h), (0,0,255),2)
-            cv2.rectangle(roi_color,(xright,y), (xright+wleft, y+h), (0,20,255),2)
-            #roi_color_2 = frame[y:y+h, x:x2]
-            cv2.imshow("left",roi_left)
-            cv2.imshow("right",roi_right)
+            #create sub images
+            roi_l = roi_color[y:y+h,x:x+wleft]
+            roi_r = roi_color[y:y+h,xright:xright+wleft]
+            #blur
+            roi_l = cv2.blur(roi_l,(7,7))
+            roi_r = cv2.blur(roi_r,(7,7))
+            #resize
+            roi_l = cv2.resize(roi_l,(300,300))
+            roi_r = cv2.resize(roi_r,(300,300))
+            #convert to color
+            roi_l_hsv = cv2.cvtColor(roi_l,cv2.COLOR_BGR2HSV)
+            roi_r_hsv = cv2.cvtColor(roi_r,cv2.COLOR_BGR2HSV)
+            thresh1 = cv2.inRange(roi_l_hsv,lower,upper)
+            thresh2 = cv2.inRange(roi_r_hsv,lower,upper)
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(10,10))
+            #apply a close morph
+            thresh1 = cv2.morphologyEx(thresh1, cv2.MORPH_CLOSE, kernel)
+            thresh2 = cv2.morphologyEx(thresh2, cv2.MORPH_CLOSE, kernel)
+            cv2.imshow("lefthsv",roi_l_hsv)
+            cv2.imshow("righthsv",roi_r_hsv)
+            cv2.imshow("left",thresh1)
+            cv2.imshow("right",thresh2)
 
         cv2.imshow("frame",frame)
         #waitKey
