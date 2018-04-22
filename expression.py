@@ -34,7 +34,6 @@ class cameraFeed():
     def stop(self):
         self.stopped = True
 
-
 def main():
     face_cascade = cv2.CascadeClassifier("cascades/face_cascade.xml")
     model = model_from_json(open("facial_expression_model_structure.json", "r").read())
@@ -63,27 +62,22 @@ def main():
             #find max indexed array 0: angry, 1:disgust, 2:fear, 3:happy, 4:sad, 5:surprise, 6:neutral
             max_index = np.argmax(predictions[0])
             emotion = emotions[max_index]
-            #write emotion text above rectangle
-            print(emotion)
             #grab the emoji
             path = "faces/" + emotions[max_index] + ".png"
-            my_file = Path(path)
-            if not my_file.is_file():
-                continue
-            
             emoji = cv2.imread(path,-1)
+            if emoji is None:
+                continue
             emoji = cv2.resize(emoji,(w,h),interpolation = cv2.INTER_AREA)
             # Create the mask for the emoji
             mask = emoji[:,:,3]
             mask_inv = cv2.bitwise_not(mask)
             emoji = emoji[:,:,0:3]
-            #resize
             roi = frame[y:y+h,x:x+w]
             roi_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
             roi_fg = cv2.bitwise_and(emoji,emoji,mask = mask)
 
             # join the roi_bg and roi_fg
-            dst = cv2.add(roi_bg,roi_fg)
+            dst = cv2.add(roi_bg,roi_fg)    
             frame[y:y+h,x:x+w] = dst
 
         cv2.imshow("face",frame)
